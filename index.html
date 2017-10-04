@@ -23,7 +23,7 @@
         <h1 class="display-3">White Mountain Hangman</h1>
         <p class="lead" id = winLoseMsg></p>
         <hr class="my-4">
-        <p>Press any key to begin!</p>
+        <p id = begin class = "begin">Press any key to begin!</p>
         <!-- <p class="lead"> -->
         <!-- <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a> -->
         <!-- </p> -->
@@ -38,14 +38,13 @@
             </div>
             <div class="col-md-4">
                 <p>Wins:</p>
-                <p id = winCounter></p>
-                <br>
+                <p id = winCounter>0</p>
+                <p>Losses:</p>
+                <p id = lossCounter>0</p>
                 <p>Current Word: </p>
                 <p id = displayWord></p>
-                <br>
-                <p >Number of guesses remaining:</p>
+                <p>Number of guesses remaining:</p>
                 <p id = letterCounter></p>
-                <br>
                 <p>Letters already used:</p>
                 <p id = lettersUsed></p>
                 

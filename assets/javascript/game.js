@@ -51,8 +51,8 @@ var mountains = [
 	['Tecumseh', 'assets/images/tecumseh.jpg']
 ];
 
-var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-	"n", "o", "p", "Q", "r", "s", "t", "u", "v", "x", "y", "z"
+var lettersRemaining = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
 ]
 
 // steps needed
@@ -86,6 +86,7 @@ var winFlag = "N";
 var loseFlag = "N";
 var wordArray = [];
 var imgAttr = "";
+var beginKey = "";
 
 
 // functions
@@ -113,10 +114,9 @@ function initializeHiddenWord(word) {
 		// 	hiddenWord.push(" ");
 		// } else {
 		hiddenWord.push("_");
-		}
-		console.log("hiddenWord: " + hiddenWord.toString());
-		return hiddenWord;
-	
+	}
+	return hiddenWord;
+
 }
 
 function addTheLetter() {
@@ -124,15 +124,22 @@ function addTheLetter() {
 	console.log("word: " + word);
 	console.log("hiddenWord: " + hiddenWord.toString());
 	console.log("userChoice: " + userChoice);
-	console.log("lettersUsed: " + lettersUsed.toString());
-	lettersUsed.push(userChoice);
-	console.log("lettersUsed: " + lettersUsed.toString());
-	for (let i = 0; i < word.length; i++) {
-		console.log("hiddenWord: " + hiddenWord.toString());
-		console.log("word.charAt: " + word.charAt(i).toLowerCase());
-		if (userChoice.toLowerCase() == word.charAt(i).toLowerCase()) {
-			console.log("found a match! ");
-			hiddenWord.splice(i, 1, userChoice);
+	//check to see that the letter hasnt already been used
+	if (lettersRemaining.includes(userChoice.toLowerCase())) {
+		console.log("im inside the lettersRemaiing If:" );
+		var index = lettersRemaining.indexOf(userChoice.toLowerCase());
+		lettersRemaining.splice(index, 1);
+		lettersUsed.push(userChoice);
+		letterCounter--;
+		console.log("index: " + index);
+		console.log("lettersUsed: " + lettersUsed.toString());
+		console.log("lettersRemaining: " + lettersRemaining.toString());
+		// cycle through and determine if the letter entered is in the word
+		for (let i = 0; i < word.length; i++) {
+			if (userChoice.toLowerCase() == word.charAt(i).toLowerCase()) {
+				console.log("found a match! ");
+				hiddenWord.splice(i, 1, userChoice);
+			}
 		}
 	}
 	console.log("hiddenWord: " + hiddenWord.toString());
@@ -150,42 +157,32 @@ function displayTheWord() {
 	console.log("Word: " + word);
 	console.log("hiddenWord: " + hiddenWord.toString());
 	console.log("displayWord: " + displayWord);
-	// document.getElementById("displayWord") = displayWord;
 	return displayWord;
 }
 
-// function determineWinOrLose() {
-// 	if (word.toLowerCase() === hiddenWord.toString.toLowerCase()) {
-// 		imgPath = mountains[mountainIndex][1];
-// 		winCounter++;
-// 		document.getElementById("YOU WIN!!").innerHTML = winLoseMsg;
-// 	} else {
-// 		lossCounter++;
-// 		document.getElementById("YOU LOSE!!").innerHTML = winLoseMsg;
-// 	}
-// }
-
-function displayMountainImg(imgPath) {
-	// writes an image tag for the appropriate mountain picture.
-displayImg.setAttribute("src","assets/images/" + imgPath);
-	// document.write("<img  " + "src=assets/images/" + imgPath + " height='300' width='300' alt='mountain pic'>");
-	// return displayImg;
-}
 
 
+//---------------------------------//
 // BEGIN by pressing any key:
-// while (playAgain) {
+//---------------------------------//
 document.onkeyup = function (event) {
 	// Determines which key was pressed.
 	console.log("im beginning by setting begin to true");
-	userChoice = event.key;
-	console.log("begin: " + begin);
+	beginKey = event.key;
+	//initialize variables
 	begin = true;
-	console.log("begin: " + begin);
-	console.log("userChoice: " + userChoice);
+	winFlag = "N";
+	loseFlag = "N";
+	letterCounter = 12;
+	word = "";
+	hiddenWord = [];
+	displayWord = "";
+	lettersUsed = [];
+	winLoseMsg = "";
 
-	// displayImg = displayMountainImg(imgPath);
-	// document.getElementById("displayImg").innerHTML = displayImg;
+	console.log("begin: " + begin);
+	console.log("beginKey: " + beginKey);
+
 
 	//play the game, begin choosing letters
 	console.log("begin playing the game");
@@ -198,18 +195,15 @@ document.onkeyup = function (event) {
 	//display the hiddenword
 	displayWord = displayTheWord(hiddenWord);
 	document.getElementById("displayWord").innerHTML = displayWord;
+	//display the letter counter variable, which is set to 12 to begin
 	document.getElementById("letterCounter").innerHTML = letterCounter;
-	// displayImg = "<img src=/assets/images/chocorua.jpg height='300' width='300' alt='mountain pic'>";
-	// document.getElementById("displayImg").innerHTML = displayImg;
-	// displayImg = document.write("<img src = " + imgPath + "height='300' width='300' alt='mountain pic'>"
-	//    ); 
+	//de-emphasize the 'pressany key to begin' message
+	document.getElementById("begin").setAttribute("class", "inProgress");
 
+	//------------------------------------//
 	//User enters their letter choice here
-	// document.onkeyup = function (event) {
-	// Determines which key was pressed.
-	// userChoice = event.key;
-
 	//the user gets 12 guesses maximum; for loop will execute 12 times
+	//------------------------------------//
 	for (let i = 0; i < 12; i++) {
 		//User enters thier key choice
 		document.onkeyup = function (event) {
@@ -219,40 +213,46 @@ document.onkeyup = function (event) {
 			addTheLetter();
 			console.log("hiddenWord before displayTheWord: " + hiddenWord.toString());
 			displayWord = displayTheWord(hiddenWord);
-			letterCounter--;
+			
+			//write the variables to the DOM
 			document.getElementById("displayWord").innerHTML = displayWord;
 			document.getElementById("letterCounter").innerHTML = letterCounter;
-			console.log("letterCounter: " + letterCounter);
 			document.getElementById("lettersUsed").innerHTML = lettersUsed;
-			console.log("hiddenword to string: " + hiddenWord.toString().toLowerCase());
-			console.log("word split: " + word.split(","));
-			console.log("strigify " + JSON.stringify(hiddenWord));
-			// wordArray = array.from(word);
-			// if (JSON.stringify(wordArray) === JSON.stringify(hiddenWord)) {
+			console.log("letterCounter: " + letterCounter);
 			console.log("hiddenword : " + hiddenword.toString());
-			if (!hiddenWord.includes("_") ){
+			//once all the letters have been guessed, there are no more '_' and user wins
+			//update the mountain image, send out win message, update win counter
+			console.log("im just before the lose if,  letterCounter:" + letterCounter);
+
+			if (!hiddenWord.includes("_")) {
 				console.log("im in the win if");
 				winFlag = "Y";
-				imgPath = mountains[mountainIndex][1];
 				imgAttr = document.getElementById("displayImg");
-				imgAttr.setAttribute("src",  imgPath );
+				imgAttr.setAttribute("src", imgPath);
 				winCounter++;
 				document.getElementById("winCounter").innerHTML = winCounter;
 				document.getElementById("winLoseMsg").innerHTML = "YOU WIN!!";
+				document.getElementById("begin").setAttribute("class", "begin");
+				// break out of the for loop, user won and game is over
+				console.log("i: " + i);
 				i = 12;
-				console.log("in the win if letterCounter: " + letterCounter);
+				console.log("i: " + i);
+				console.log("in the win if, letterCounter: " + letterCounter);
+			} else if (letterCounter < 1) {
+				console.log("im in the lose if");
+				loseFlag = "Y";
+				imgAttr = document.getElementById("displayImg");
+				imgAttr.setAttribute("src", imgPath);
+				lossCounter++;
+				document.getElementById("lossCounter").innerHTML = lossCounter;
+				document.getElementById("winLoseMsg").innerHTML = "YOU LOSE!!";
+				document.getElementById("begin").setAttribute("class", "begin");
+				// break out of the for loop, user lost and game is over
+				console.log("i: " + i);
 			}
+
+
 		}
-		if (letterCounter === 0 && winFlag !== "Y") {
-			console.log("im in the lose if");
-			lossCounter++;
-			document.getElementById("YOU LOSE!!").innerHTML = winLoseMsg;
-			loseFlag = "Y";
-		}
-		// determineWinOrLose();
 		// playAgain = alert("Do you want to play again??");
 	}
 }
-
-// }
-// }
