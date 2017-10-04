@@ -1,1 +1,10 @@
 /* comment */
+
+.leftSection {
+    margin-right: 1px;
+}
+
+.rightSection {
+    background-image: url("../images/hangman2.gif");
+    opacity: 0.25;
+}
