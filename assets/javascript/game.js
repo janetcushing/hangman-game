@@ -1,6 +1,7 @@
+//-------------------------------//
 // javascript for hangman game
-
-//array to hold all of the hangman words plus thier corresponding pictures
+//-------------------------------//
+//array to hold all of the hangman chosenWords plus thier corresponding pictures
 var mountains = [
 	['Washington', 'assets/images/washington.jpg'],
 	['Adams', 'assets/images/adams.jpg'],
@@ -51,7 +52,10 @@ var mountains = [
 	['Tecumseh', 'assets/images/tecumseh.jpg']
 ];
 
-var lettersRemaining = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+//-----------------------------------------------//
+//used for tracking remainingLetters for guesses
+//-----------------------------------------------//
+var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
 ]
 
@@ -66,79 +70,86 @@ var lettersRemaining = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "
 // when the used letter count reaches 0, then display end of game message and fill in the letters of the word and update the photo
 // display do you want to play again message
 
+//------------//
 // variables
-
+//------------//
 var userChoice = "";
-var letterCounter = 12;
+var letterCounter = 0;
 var mountainIndex = 0;
-var word = "";
-var imgPath = "chocorua.jpg";
-var hiddenWord = [];
+var chosenWord = "";
+var guessWord = [];
 var displayWord = "";
-var begin = false;
+var begin = true;
 var lettersUsed = [];
-var playAgain = true;
+var imgPath = "";
+// var playAgain = true;
 var winLoseMsg = "";
 var winCounter = 0;
 var lossCounter = 0;
 var displayImg = "";
-var winFlag = "N";
-var loseFlag = "N";
-var wordArray = [];
+// var winFlag = "N";
+// var loseFlag = "N";
+// var wordArray = [];
 var imgAttr = "";
-var beginKey = "";
+var soundAttr = "";
+// var beginKey = "";
+var lettersRemaining = [];
 
-
+//-------------//
 // functions
+//-------------//
 
-function chooseWord() {
-	// Randomly chooses a choice from the mountains array.
-	console.log("im in the chooseWord function");
-	mountainIndex = Math.floor(Math.random() * mountains.length);
-	word = mountains[mountainIndex][0];
-	imgPath = mountains[mountainIndex][1];
-	winLoseMsg = "";
-	console.log("mountainIndex: " + mountainIndex);
-	console.log("word: " + word);
-	console.log("imgName: " + imgPath);
-
+function getRandomIndex(array) {
+	// Randomly chooses a choice from the mountains array and
+	//return the index.
+	console.log("im in the getRandomIndex function");
+	var index = Math.floor(Math.random() * array.length);	
+	console.log("mountainIndex: " + index);
+	return index;
 }
+function getTheArrayElement(index0, index1, array) {
+	// Randomly chooses a choice from the mountains array.
+	console.log("im in the getTheArrayElement function");
+	var element1 = "";
+	element1 = array[index0][index1];
+	console.log("index: " + index0);
+	console.log("chosenWord: " + element1);
+	return element1;
+}
+
 
 function initializeHiddenWord(word) {
 	//the hidden word should have a "_" for each letter in the word
 	console.log("im in the initializeHiddenWord function");
 	console.log(" word length: " + word.length);
-	hiddenword = [];
+	hiddenWord = [];
 	for (let i = 0; i < word.length; i++) {
-		// if (word.charAt(i) === " ") {
-		// 	hiddenWord.push(" ");
-		// } else {
 		hiddenWord.push("_");
 	}
 	return hiddenWord;
 
 }
 
-function addTheLetter() {
+function addTheLetter(oneKeyStroke, correctWord, hiddenWord) {
 	console.log("im in the addTheLetter function");
-	console.log("word: " + word);
+	console.log("Word: " + correctWord);
 	console.log("hiddenWord: " + hiddenWord.toString());
-	console.log("userChoice: " + userChoice);
+	console.log("userChoice: " + oneKeyStroke);
 	//check to see that the letter hasnt already been used
-	if (lettersRemaining.includes(userChoice.toLowerCase())) {
-		console.log("im inside the lettersRemaiing If:" );
-		var index = lettersRemaining.indexOf(userChoice.toLowerCase());
+	if (lettersRemaining.includes(oneKeyStroke.toLowerCase())) {
+		console.log("im inside the lettersRemaing If:");
+		var index = lettersRemaining.indexOf(oneKeyStroke.toLowerCase());
 		lettersRemaining.splice(index, 1);
-		lettersUsed.push(userChoice);
+		lettersUsed.push(oneKeyStroke);
 		letterCounter--;
 		console.log("index: " + index);
 		console.log("lettersUsed: " + lettersUsed.toString());
 		console.log("lettersRemaining: " + lettersRemaining.toString());
 		// cycle through and determine if the letter entered is in the word
-		for (let i = 0; i < word.length; i++) {
-			if (userChoice.toLowerCase() == word.charAt(i).toLowerCase()) {
+		for (let i = 0; i < correctWord.length; i++) {
+			if (oneKeyStroke.toLowerCase() == correctWord.charAt(i).toLowerCase()) {
 				console.log("found a match! ");
-				hiddenWord.splice(i, 1, userChoice);
+				hiddenWord.splice(i, 1, oneKeyStroke);
 			}
 		}
 	}
@@ -146,113 +157,138 @@ function addTheLetter() {
 	return hiddenWord;
 }
 
-function displayTheWord() {
+function displayTheWord(word) {
 	//display the hidden word to the screen with spaces between the letters. 
 	displayWord = "";
 	console.log("im in the displayTheWord function");
-	console.log(" word length: " + hiddenWord.length);
-	for (let i = 0; i < hiddenWord.length; i++) {
-		displayWord = displayWord + hiddenWord[i].toUpperCase() + " ";
+	console.log(" word length: " + word.length);
+	for (let i = 0; i < word.length; i++) {
+		displayWord = displayWord + word[i].toUpperCase() + " ";
 	}
 	console.log("Word: " + word);
-	console.log("hiddenWord: " + hiddenWord.toString());
 	console.log("displayWord: " + displayWord);
 	return displayWord;
 }
 
 
-
-//---------------------------------//
-// BEGIN by pressing any key:
-//---------------------------------//
+//------------------------------------//
+// User enters their keystroke choice here
+// The game BEGINs by user pressing any key
+//------------------------------------//
 document.onkeyup = function (event) {
 	// Determines which key was pressed.
-	console.log("im beginning by setting begin to true");
-	beginKey = event.key;
-	//initialize variables
-	begin = true;
-	winFlag = "N";
-	loseFlag = "N";
-	letterCounter = 12;
-	word = "";
-	hiddenWord = [];
-	displayWord = "";
-	lettersUsed = [];
-	winLoseMsg = "";
+	userChoice = event.key;
 
-	console.log("begin: " + begin);
-	console.log("beginKey: " + beginKey);
+	//-------------------------------------------------------//
+	//first keystroke initializes the game, but doesnt contribute
+	//to the letters guessed as part of the word
+	//-------------------------------------------------------//
+	if (begin) {
+		console.log("begin playing the game");
+		console.log("begin: " + begin);
+		//--------------------//
+		//initialize variables
+		//--------------------//
+		// winFlag = "N";
+		// loseFlag = "N";
+		letterCounter = 12;
+		chosenWord = "";
+		guessWord = [];
+		displayWord = "";
+		lettersUsed = [];
+		lettersRemaining = alphabet.slice();
+		// winLoseMsg = "";
+		document.getElementById("winLoseMsg").innerHTML = "";
+		//------------------------------------------------//
+		//randomly choose a word from the mountains array
+		//------------------------------------------------//
+		mountainIndex = getRandomIndex(mountains);
+		chosenWord = getTheArrayElement(mountainIndex, 0, mountains);
+		imgPath    = getTheArrayElement(mountainIndex, 1, mountains);
+		//------------------------------------------------//
+		// initialize the hidden word to one dash for each
+		// letter in the chosen word
+		// and display it in the DOM along with counters
+		//de-emphasize the 'press any key to begin' message
+		//------------------------------------------------//
+		guessWord = initializeHiddenWord(chosenWord);
+		displayWord = displayTheWord(guessWord);
+		console.log("displayWord: " + displayWord);
+		document.getElementById("displayWord").innerHTML = displayWord;
+		document.getElementById("letterCounter").innerHTML = letterCounter;
+		document.getElementById("lettersUsed").innerHTML = lettersUsed;
+		document.getElementById("begin").setAttribute("class", "inProgress");
+		//--------------------------------------//
+		//turn off the begin flag
+		//--------------------------------------//
+		begin = false;
+	} else {
+		//------------------------------------//
+		//the user gets 12 guesses maximum; 
+		//for loop will execute 12 times
+		//------------------------------------//	
+		for (let i = 0; i < 12; i++) {
+			//process the users typed in choice
 
+			console.log("guessWord before addTheLetter: " + guessWord.toString());
+			addTheLetter(userChoice, chosenWord, guessWord);
+			displayWord = displayTheWord(guessWord);
 
-	//play the game, begin choosing letters
-	console.log("begin playing the game");
-	console.log("begin: " + begin);
-
-	//choose a word from the mountains array
-	chooseWord();
-	// initialize the hidden word to all dashes
-	hiddenWord = initializeHiddenWord(word);
-	//display the hiddenword
-	displayWord = displayTheWord(hiddenWord);
-	document.getElementById("displayWord").innerHTML = displayWord;
-	//display the letter counter variable, which is set to 12 to begin
-	document.getElementById("letterCounter").innerHTML = letterCounter;
-	//de-emphasize the 'pressany key to begin' message
-	document.getElementById("begin").setAttribute("class", "inProgress");
-
-	//------------------------------------//
-	//User enters their letter choice here
-	//the user gets 12 guesses maximum; for loop will execute 12 times
-	//------------------------------------//
-	for (let i = 0; i < 12; i++) {
-		//User enters thier key choice
-		document.onkeyup = function (event) {
-			// Determines which key was pressed.
-			userChoice = event.key;
-			console.log("hiddenWord before addTheLetter: " + hiddenWord.toString());
-			addTheLetter();
-			console.log("hiddenWord before displayTheWord: " + hiddenWord.toString());
-			displayWord = displayTheWord(hiddenWord);
-			
 			//write the variables to the DOM
 			document.getElementById("displayWord").innerHTML = displayWord;
 			document.getElementById("letterCounter").innerHTML = letterCounter;
 			document.getElementById("lettersUsed").innerHTML = lettersUsed;
 			console.log("letterCounter: " + letterCounter);
-			console.log("hiddenword : " + hiddenword.toString());
-			//once all the letters have been guessed, there are no more '_' and user wins
-			//update the mountain image, send out win message, update win counter
-			console.log("im just before the lose if,  letterCounter:" + letterCounter);
+			console.log("guessWord : " + guessWord.toString());
 
-			if (!hiddenWord.includes("_")) {
+			//----------------------//
+			//winning or lose check
+			//----------------------//
+			//once all the letters have been guessed, there are no more '_' 
+			//in the guessWord and user wins
+			//update the mountain image, send out win message, update win counter
+			if (!guessWord.includes("_")) {
+				//winning
 				console.log("im in the win if");
-				winFlag = "Y";
+				// winFlag = "Y";
+				console.log("imgPath: " + imgPath);
 				imgAttr = document.getElementById("displayImg");
 				imgAttr.setAttribute("src", imgPath);
 				winCounter++;
 				document.getElementById("winCounter").innerHTML = winCounter;
 				document.getElementById("winLoseMsg").innerHTML = "YOU WIN!!";
 				document.getElementById("begin").setAttribute("class", "begin");
+
+				///////////////////////
+				soundAttr = document.getElementById("winLoseMsg");
+				soundAttr.insertAdjacentHTML("afterend", 
+				"<audio autoplay hidden><source src='assets/sounds/24_Congrats.mp3' type='audio/mpeg'> CONGRATULATIONS!</audio>");
+				///////////////////////
 				// break out of the for loop, user won and game is over
-				console.log("i: " + i);
 				i = 12;
 				console.log("i: " + i);
 				console.log("in the win if, letterCounter: " + letterCounter);
+				begin = true;
+			//note: letterCounter counts down backwards from 12 to 0
+			//when letterCounter gets to 0, all chances are used up and user loses
 			} else if (letterCounter < 1) {
+				//losing
 				console.log("im in the lose if");
-				loseFlag = "Y";
+				// loseFlag = "Y";
 				imgAttr = document.getElementById("displayImg");
 				imgAttr.setAttribute("src", imgPath);
 				lossCounter++;
+				console.log("lossCounter " + lossCounter);
+				displayWord = displayTheWord(chosenWord);
+				document.getElementById("displayWord").innerHTML = displayWord;
 				document.getElementById("lossCounter").innerHTML = lossCounter;
 				document.getElementById("winLoseMsg").innerHTML = "YOU LOSE!!";
 				document.getElementById("begin").setAttribute("class", "begin");
-				// break out of the for loop, user lost and game is over
+				begin = true;
+				//at the end of the for loop, user lost and game is over
 				console.log("i: " + i);
-			}
+			} //if win or lose end
 
-
-		}
-		// playAgain = alert("Do you want to play again??");
-	}
-}
+		} //for loop end
+	} //if begin end
+} // on.keyup end
