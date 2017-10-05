@@ -1,25 +1,32 @@
-/* comment */
+/* css styles */
+
+.jumbotron {
+    padding: 3rem 1rem;
+}
 
 .leftSection {
     margin-right: 1px;
 }
 
-.rightSection {
-    background-image: url("../images/hangman2.gif");
-    opacity: 0.25;
-}
-.lead{
+.lead {
     font-size: 28px;
     font-weight: bold;
     color: red;
 }
-.begin{
+
+.begin {
     font-weight: bold;
     font-size: 24px;
 }
 
-.inProgress{
+.inProgress {
     font-weight: none;
     font-size: 16px;
-    color:ghostwhite;
+    color: #e9ecef;
+}
+
+.col-md-4 {
+    width: auto;
+    margin: 10px 20px 0px 20px;
+    padding: 0px 40px 0px 40px;
 }
