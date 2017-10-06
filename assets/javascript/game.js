@@ -53,9 +53,9 @@ var mountains = [
 	['Tecumseh', 'assets/images/tecumseh.jpg']
 ];
 
-//-----------------------------------------------//
-//used for tracking remainingLetters for guesses
-//-----------------------------------------------//
+//--------------------------------------------------------//
+//alphabet used for tracking remainingLetters for guesses
+//--------------------------------------------------------//
 var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
 	"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
 ]
@@ -97,12 +97,8 @@ var soundAttr = "";
 //-------------//
 
 // get a random number to use as the index to select the "chosenWord"
-// Randomly chooses a choice from the mountains array and
-// return the index.
 function getRandomIndex(array) {
-	console.log("im in the getRandomIndex function");
 	var index = Math.floor(Math.random() * array.length);
-	console.log("index: " + index);
 	return index;
 }
 
@@ -112,54 +108,40 @@ function getRandomIndex(array) {
 // name as chosenWord, then call the function again to get the 
 // picture associated with that mountain.
 function getTheArrayElement(index0, index1, array) {
-	console.log("im in the getTheArrayElement function");
 	var element1 = "";
 	element1 = array[index0][index1];
-	console.log("index0: " + index0);
-	console.log("index1: " + index1);
-	console.log("element1: " + element1);
 	return element1;
 }
 
 // this function takes in the chosenWord, and
 // returns the guessWord array populated with
 // one underscore character for each letter in
-// chosenWord
+// chosenWord.  if the chosenWord has a space in it,
+// a space is entered into the guessWord, rather than 
+// an underscore
 function initializeGuessWord(word) {
-	console.log("im in the initializeGuessWord function");
 	var hiddenWord = [];
 	for (let i = 0; i < word.length; i++) {
-		console.log("word " + word);
-		console.log("word.charAt " + word.charAt(i));
 		if (word.charAt(i) === " ") {
 			hiddenWord.push("&#29;");
-			console.log("hiddenWordsp: " + hiddenWord[i]);
 		} else {
 			hiddenWord.push("_");
-			console.log("hiddenWord_: " + hiddenWord[i]);
 		}
 	}
 	return hiddenWord;
 }
 
 // update the letterCounter variable.  if the keystroke has not been
-// entered yet, reduce the letter counter by 1. and move the letter
+// entered yet, reduce the letter counter by 1, and move the letter
 //from the lettersRemaining array to the lettersUsed array.  if it has been
 // previously entered, then ignore that keystroke
 function countTheLetter(oneKeyStroke, remaining, used, counter) {
-	console.log("im in the countTheLetter function");
-	console.log("userChoice: " + oneKeyStroke);
-	//check to see that the letter hasn't already been used
 	if (remaining.includes(oneKeyStroke.toLowerCase())) {
-		console.log("im inside the lettersRemaing If:");
 		var index = remaining.indexOf(oneKeyStroke.toLowerCase());
 		remaining.splice(index, 1);
 		used.push(oneKeyStroke);
 		counter--;
-		console.log("lettersUsed: " + used.toString());
-		console.log("lettersRemaining: " + remaining.toString());
 	}
-	console.log("counter: " + counter);
 	return counter;
 }
 
@@ -167,33 +149,21 @@ function countTheLetter(oneKeyStroke, remaining, used, counter) {
 // the chosenWord or not, and if so, add it to the guessWords array
 // in the proper position 
 function addTheLetter(oneKeyStroke, correctWord, guessingWord) {
-	console.log("im in the addTheLetter function");
-	console.log("word: " + correctWord);
-	console.log("hiddenWord: " + guessingWord.toString());
-	console.log("userChoice: " + oneKeyStroke);
-	// cycle through and determine if the letter entered is in the word
 	for (let i = 0; i < correctWord.length; i++) {
 		if (oneKeyStroke.toLowerCase() == correctWord.charAt(i).toLowerCase()) {
-			console.log("found a match! ");
 			guessingWord.splice(i, 1, oneKeyStroke);
 		}
-		//}
 	}
-	console.log("guessingWord: " + guessingWord.toString());
 	return guessingWord;
 }
 
 // format the word for displaying to the DOM.  Put spaces between the letters
 // and make the letters upper case
-function displayTheWord(word) {
+function formatTheWordForDisplay(word) {
 	var formatWord = "";
-	console.log("im in the displayTheWord function");
-	console.log(" word length: " + word.length);
 	for (let i = 0; i < word.length; i++) {
 		formatWord = formatWord + word[i].toUpperCase() + " ";
 	}
-	console.log("Word: " + word);
-	console.log("formatWord: " + formatWord);
 	return formatWord;
 }
 
@@ -214,8 +184,7 @@ document.onkeyup = function (event) {
 	//to the letters guessed as part of the word
 	//-------------------------------------------------------//
 	if (begin) {
-		console.log("begin playing the game");
-		console.log("begin: " + begin);
+		
 		//--------------------//
 		//initialize variables
 		//--------------------//
@@ -242,8 +211,8 @@ document.onkeyup = function (event) {
 		// and remove the win or lose message from the previous game
 		//------------------------------------------------//
 		guessWord = initializeGuessWord(chosenWord);
-		displayWord = displayTheWord(guessWord);
-		console.log("displayWord: " + displayWord);
+		displayWord = formatTheWordForDisplay(guessWord);
+		
 		document.getElementById("displayWord").innerHTML = displayWord;
 		document.getElementById("letterCounter").innerHTML = letterCounter;
 		document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
@@ -253,35 +222,32 @@ document.onkeyup = function (event) {
 		//turn off the begin flag
 		//--------------------------------------//
 		begin = false;
+
 	} else {
+
 		//------------------------------------//
 		//the user gets 12 guesses maximum; 
 		//for loop will execute 12 times
 		//------------------------------------//	
 		for (let i = 0; i < 12; i++) {
 			//process the users typed in choice
-			console.log("in the guess for loop");
 			letterCounter = countTheLetter(userChoice, lettersRemaining, lettersUsed, letterCounter);
 			guessWord = addTheLetter(userChoice, chosenWord, guessWord);
-			console.log("guessWord: " + guessWord.toString());
-			console.log("letterCounter: " + letterCounter);
-			displayWord = displayTheWord(guessWord);
+			displayWord = formatTheWordForDisplay(guessWord);
+
 			//write the variables to the DOM
 			document.getElementById("displayWord").innerHTML = displayWord;
 			document.getElementById("letterCounter").innerHTML = letterCounter;
 			document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
 
 			//----------------------//
-			//win or lose check
+			// win or lose check
 			//----------------------//
-			//once all the letters have been guessed, there are no more '_' 
-			//in the guessWord and user wins
-			//update the mountain image, send out win message, update win counter
-			console.log("before the win loss if - lossCounter: " + lossCounter);
+			// once all the letters have been guessed correctly, there are no more '_' 
+			// in the guessWord and user wins
+			// update the mountain image, send out win message, update win counter
 			if (!guessWord.includes("_")) {
 				//winning
-				console.log("im in the win if");
-				console.log("imgPath: " + imgPath);
 				imgAttr = document.getElementById("displayImg");
 				imgAttr.setAttribute("src", imgPath);
 				soundAttr = document.getElementById("winLoseMsg");
@@ -296,22 +262,19 @@ document.onkeyup = function (event) {
 				document.getElementById("begin").setAttribute("class", "begin");
 				// break out of the for loop, user won and game is over
 				i = 12;
-				console.log("i: " + i);
 				begin = true;
 
-				//note: letterCounter counts down backwards from 12 to 0
-				//when letterCounter gets to 0, all chances are used up and user loses
+				// note: letterCounter counts down backwards from 12 to 0
+				// when letterCounter gets to 0, all chances are used up and user loses
 			} else if (letterCounter < 1) {
 				//losing
-				console.log("im in the lose if");
 				imgAttr = document.getElementById("displayImg");
 				imgAttr.setAttribute("src", imgPath);
 				soundAttr = document.getElementById("winLoseMsg");
 				soundAttr.insertAdjacentHTML("afterend",
 					"<audio autoplay hidden><source src='assets/sounds/336998__corsica-s__awww-01.wav' type='audio/wav'> SO SAD!</audio>");
 				lossCounter++;
-				console.log("lossCounter " + lossCounter);
-				displayWord = displayTheWord(chosenWord);
+				displayWord = formatTheWordForDisplay(chosenWord);
 				document.getElementById("winLoseMsg").style.fontSize = "28px";
 				document.getElementById("winLoseMsg").style.color = "red";
 				document.getElementById("winLoseMsg").style.fontWeight = "bold";
