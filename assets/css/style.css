@@ -34,15 +34,16 @@
     color: #e9ecef;
 }
 
-.col-md-4 {
+.col-md-4, .col-md-5 {
     width: auto;
     margin: 10px 20px 0px 20px;
-    padding: 0px 40px 0px 40px;
+    padding: 0px 0px 0px 40px;
 }
 
 #displayWord,
 #lettersUsed {
     font-family: 'Libre Baskerville', Arial, Helvetica, sans-serif;
+    font-size: 16px;
 }
 
 footer {
@@ -63,7 +64,7 @@ footer {
     .display-3 {
         font-size: 2.9rem;
     }
-    .col-md-4 {
+    .col-md-4, .col-md-5 {
         margin: 8px 15px 0px 15px;
         padding: 0px 30px 0px 30px;
     }
