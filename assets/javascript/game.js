@@ -184,7 +184,7 @@ document.onkeyup = function (event) {
 	//to the letters guessed as part of the word
 	//-------------------------------------------------------//
 	if (begin) {
-		
+
 		//--------------------//
 		//initialize variables
 		//--------------------//
@@ -212,7 +212,7 @@ document.onkeyup = function (event) {
 		//------------------------------------------------//
 		guessWord = initializeGuessWord(chosenWord);
 		displayWord = formatTheWordForDisplay(guessWord);
-		
+
 		document.getElementById("displayWord").innerHTML = displayWord;
 		document.getElementById("letterCounter").innerHTML = letterCounter;
 		document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
