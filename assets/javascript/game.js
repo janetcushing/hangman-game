@@ -11,41 +11,41 @@ var mountains = [
 	['Madison', 'assets/images/madison.jpg'],
 	['Lafayette', 'assets/images/lafayette.jpg'],
 	['Lincoln', 'assets/images/lincoln.jpg'],
-	// ['South Twin', 'assets/images/southtwin.jpg'],
-	// ['Carter Dome', 'assets/images/carterdome.jpg'],
+	['South Twin', 'assets/images/southtwin.jpg'],
+	['Carter Dome', 'assets/images/carterdome.jpg'],
 	['Moosilauke', 'assets/images/moosilauke.jpg'],
 	['Eisenhower', 'assets/images/eisenhower.jpg'],
-	// ['North Twin', 'assets/images/northtwin.jpg'],
+	['North Twin', 'assets/images/northtwin.jpg'],
 	['Carrigain', 'assets/images/carrigain.jpg'],
 	['Bond', 'assets/images/bond.jpg'],
-	// ['Middle Carter', 'assets/images/carter.jpg'],
-	// ['West Bond', 'assets/images/bond.jpg'],
+	['Middle Carter', 'assets/images/carter.jpg'],
+	['West Bond', 'assets/images/bond.jpg'],
 	['Garfield', 'assets/images/garfield.jpg'],
 	['Liberty', 'assets/images/liberty.jpg'],
-	// ['South Carter', 'assets/images/carter.jpg'],
+	['South Carter', 'assets/images/carter.jpg'],
 	['Wildcat', 'assets/images/wildcat.jpg'],
 	['Hancock', 'assets/images/hancock.jpg'],
-	// ['South Kinsman', 'assets/images/kinsman.jpg'],
+	['South Kinsman', 'assets/images/kinsman.jpg'],
 	['Field', 'assets/images/field.jpg'],
 	['Osceola', 'assets/images/osceola.jpg'],
 	['Flume', 'assets/images/flume.jpg'],
-	// ['South Hancock', 'assets/images/hancock.jpg'],
+	['South Hancock', 'assets/images/hancock.jpg'],
 	['Pierce', 'assets/images/eisenhower.jpg'],
-	// ['North Kinsman', 'assets/images/kinsman.jpg'],
+	['North Kinsman', 'assets/images/kinsman.jpg'],
 	['Willey', 'assets/images/willey.jpg'],
 	['Bondcliff', 'assets/images/bond.jpg'],
 	['Zealand', 'assets/images/zealand.jpg'],
-	// ['North Tripyramid', 'assets/images/tripyramid.jpg'],
+	['North Tripyramid', 'assets/images/tripyramid.jpg'],
 	['Cabot', 'assets/images/cabot.jpg'],
 	['East Osceola', 'assets/images/osceola.jpg'],
-	// ['Middle Tripyramid', 'assets/images/tripyramid.jpg'],
+	['Middle Tripyramid', 'assets/images/tripyramid.jpg'],
 	['Cannon', 'assets/images/cannon.jpg'],
 	['Hale', 'assets/images/hale.jpg'],
 	['Jackson', 'assets/images/jackson.jpg'],
 	['Tom', 'assets/images/tom.jpg'],
 	['Moriah', 'assets/images/moriah.jpg'],
 	['Passaconaway', 'assets/images/passaconaway.jpg'],
-	// ['Owls Head', 'assets/images/owlshead.jpg'],
+	['Owls Head', 'assets/images/owlshead.jpg'],
 	['Galehead', 'assets/images/galehead.jpg'],
 	['Whiteface', 'assets/images/whiteface.jpg'],
 	['Waumbek', 'assets/images/waumbek.jpg'],
@@ -129,7 +129,15 @@ function initializeGuessWord(word) {
 	console.log("im in the initializeGuessWord function");
 	var hiddenWord = [];
 	for (let i = 0; i < word.length; i++) {
-		hiddenWord.push("_");
+		console.log("word " + word);
+		console.log("word.charAt " + word.charAt(i));
+		if (word.charAt(i) === " ") {
+			hiddenWord.push("&#29;");
+			console.log("hiddenWordsp: " + hiddenWord[i]);
+		} else {
+			hiddenWord.push("_");
+			console.log("hiddenWord_: " + hiddenWord[i]);
+		}
 	}
 	return hiddenWord;
 }
@@ -178,15 +186,15 @@ function addTheLetter(oneKeyStroke, correctWord, guessingWord) {
 // format the word for displaying to the DOM.  Put spaces between the letters
 // and make the letters upper case
 function displayTheWord(word) {
-	displayWord = "";
+	var formatWord = "";
 	console.log("im in the displayTheWord function");
 	console.log(" word length: " + word.length);
 	for (let i = 0; i < word.length; i++) {
-		displayWord = displayWord + word[i].toUpperCase() + " ";
+		formatWord = formatWord + word[i].toUpperCase() + " ";
 	}
 	console.log("Word: " + word);
-	console.log("displayWord: " + displayWord);
-	return displayWord;
+	console.log("formatWord: " + formatWord);
+	return formatWord;
 }
 
 
@@ -217,6 +225,7 @@ document.onkeyup = function (event) {
 		displayWord = "";
 		lettersUsed = [];
 		lettersRemaining = alphabet.slice();
+		winLoseMsg = "";
 
 		//------------------------------------------------//
 		//randomly choose a word from the mountains array
@@ -235,10 +244,9 @@ document.onkeyup = function (event) {
 		guessWord = initializeGuessWord(chosenWord);
 		displayWord = displayTheWord(guessWord);
 		console.log("displayWord: " + displayWord);
-
 		document.getElementById("displayWord").innerHTML = displayWord;
 		document.getElementById("letterCounter").innerHTML = letterCounter;
-		document.getElementById("lettersUsed").innerHTML = lettersUsed;
+		document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
 		document.getElementById("begin").setAttribute("class", "inProgress");
 		document.getElementById("winLoseMsg").innerHTML = "";
 		//--------------------------------------//
@@ -261,7 +269,7 @@ document.onkeyup = function (event) {
 			//write the variables to the DOM
 			document.getElementById("displayWord").innerHTML = displayWord;
 			document.getElementById("letterCounter").innerHTML = letterCounter;
-			document.getElementById("lettersUsed").innerHTML = lettersUsed;
+			document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
 
 			//----------------------//
 			//win or lose check
@@ -280,8 +288,11 @@ document.onkeyup = function (event) {
 				soundAttr.insertAdjacentHTML("afterend",
 					"<audio autoplay hidden><source src='assets/sounds/24_Congrats.mp3' type='audio/mpeg'> CONGRATULATIONS!</audio>");
 				winCounter++;
-				document.getElementById("winCounter").innerHTML = winCounter;
+				document.getElementById("winLoseMsg").style.fontSize = "28px";
+				document.getElementById("winLoseMsg").style.color = "red";
+				document.getElementById("winLoseMsg").style.fontWeight = "bold";
 				document.getElementById("winLoseMsg").innerHTML = "YOU WIN!!";
+				document.getElementById("winCounter").innerHTML = winCounter;
 				document.getElementById("begin").setAttribute("class", "begin");
 				// break out of the for loop, user won and game is over
 				i = 12;
@@ -301,9 +312,12 @@ document.onkeyup = function (event) {
 				lossCounter++;
 				console.log("lossCounter " + lossCounter);
 				displayWord = displayTheWord(chosenWord);
+				document.getElementById("winLoseMsg").style.fontSize = "28px";
+				document.getElementById("winLoseMsg").style.color = "red";
+				document.getElementById("winLoseMsg").style.fontWeight = "bold";
+				document.getElementById("winLoseMsg").innerHTML = "YOU LOSE!!";
 				document.getElementById("displayWord").innerHTML = displayWord;
 				document.getElementById("lossCounter").innerHTML = lossCounter;
-				document.getElementById("winLoseMsg").innerHTML = "YOU LOSE!!";
 				document.getElementById("begin").setAttribute("class", "begin");
 				begin = true;
 				//at the end of the for loop, user lost and game is over
