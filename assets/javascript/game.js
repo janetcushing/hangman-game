@@ -195,7 +195,7 @@ document.onkeyup = function (event) {
 		//--------------------//
 		//initialize variables
 		//--------------------//
-		letterCounter = 8;
+		letterCounter = 10;
 		chosenWord = "";
 		guessWord = [];
 		displayWord = "";
@@ -234,7 +234,7 @@ document.onkeyup = function (event) {
 
 		//-----------------------------------------------------------//
 		//Process the users typed in choice
-		//the user gets 8 wrong guesses maximum; 
+		//the user gets 10 wrong guesses maximum; 
 		//wrong guesses are tracked with the letterCounter variable
 		//-----------------------------------------------------------//	
 
@@ -270,7 +270,7 @@ document.onkeyup = function (event) {
 			document.getElementById("begin").setAttribute("class", "begin");
 			begin = true;
 		}
-		// note: letterCounter counts down backwards from 8 to 0
+		// note: letterCounter counts down backwards from 10 to 0
 		// when letterCounter gets to 0, all chances are used up and user loses
 		//display the losing message and set the begin flag to start the next game
 		if (letterCounter < 1) {
