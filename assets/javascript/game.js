@@ -123,7 +123,7 @@ function initializeGuessWord(word) {
 	var hiddenWord = [];
 	for (let i = 0; i < word.length; i++) {
 		if (word.charAt(i) === " ") {
-			hiddenWord.push("&#29;");
+			hiddenWord.push("   ");
 		} else {
 			hiddenWord.push("_");
 		}
@@ -132,17 +132,24 @@ function initializeGuessWord(word) {
 }
 
 // update the letterCounter variable.  if the keystroke has not been
-// entered yet, reduce the letter counter by 1, and move the letter
+// entered previously, and is a wrong guess, reduce the letter counter by 1.  Move the letter
 //from the lettersRemaining array to the lettersUsed array.  if it has been
 // previously entered, then ignore that keystroke
-function countTheLetter(oneKeyStroke, remaining, used, counter) {
+function countTheLetter(oneKeyStroke, remaining, used, cntr, word) {
+	var index = 0;
+	var isWrongGuess = true;
 	if (remaining.includes(oneKeyStroke.toLowerCase())) {
-		var index = remaining.indexOf(oneKeyStroke.toLowerCase());
+		index = remaining.indexOf(oneKeyStroke.toLowerCase());
 		remaining.splice(index, 1);
 		used.push(oneKeyStroke);
-		counter--;
+		if (word.toLowerCase().includes(oneKeyStroke.toLowerCase())) {
+			isWrongGuess = false;
+		}
+		if (isWrongGuess) {
+			cntr--;
+		}
 	}
-	return counter;
+	return cntr;
 }
 
 // process the key entered by the user.  check if it is in
@@ -188,7 +195,7 @@ document.onkeyup = function (event) {
 		//--------------------//
 		//initialize variables
 		//--------------------//
-		letterCounter = 12;
+		letterCounter = 8;
 		chosenWord = "";
 		guessWord = [];
 		displayWord = "";
@@ -225,67 +232,64 @@ document.onkeyup = function (event) {
 
 	} else {
 
-		//------------------------------------//
-		//the user gets 12 guesses maximum; 
-		//for loop will execute 12 times
-		//------------------------------------//	
-		for (let i = 0; i < 12; i++) {
-			//process the users typed in choice
-			letterCounter = countTheLetter(userChoice, lettersRemaining, lettersUsed, letterCounter);
-			guessWord = addTheLetter(userChoice, chosenWord, guessWord);
-			displayWord = formatTheWordForDisplay(guessWord);
+		//-----------------------------------------------------------//
+		//Process the users typed in choice
+		//the user gets 8 wrong guesses maximum; 
+		//wrong guesses are tracked with the letterCounter variable
+		//-----------------------------------------------------------//	
 
-			//write the variables to the DOM
+		letterCounter = countTheLetter(userChoice, lettersRemaining, lettersUsed, letterCounter, chosenWord, );
+		guessWord = addTheLetter(userChoice, chosenWord, guessWord);
+		displayWord = formatTheWordForDisplay(guessWord);
+
+		//write the variables to the DOM
+		document.getElementById("displayWord").innerHTML = displayWord;
+		document.getElementById("letterCounter").innerHTML = letterCounter;
+		document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
+
+		//----------------------//
+		// win or lose check
+		//----------------------//
+		// once all the letters have been guessed correctly, there are no more '_' 
+		// in the guessWord and user wins
+		// update the mountain image, send out win message, update win counter
+		// set the begin flag to start the next game
+		if (!guessWord.includes("_")) {
+			//winning
+			imgAttr = document.getElementById("displayImg");
+			imgAttr.setAttribute("src", imgPath);
+			soundAttr = document.getElementById("winLoseMsg");
+			soundAttr.insertAdjacentHTML("afterend",
+				"<audio autoplay hidden><source src='assets/sounds/24_Congrats.mp3' type='audio/mpeg'> CONGRATULATIONS!</audio>");
+			winCounter++;
+			document.getElementById("winLoseMsg").style.fontSize = "28px";
+			document.getElementById("winLoseMsg").style.color = "red";
+			document.getElementById("winLoseMsg").style.fontWeight = "bold";
+			document.getElementById("winLoseMsg").innerHTML = "YOU WIN!!";
+			document.getElementById("winCounter").innerHTML = winCounter;
+			document.getElementById("begin").setAttribute("class", "begin");
+			begin = true;
+		}
+		// note: letterCounter counts down backwards from 8 to 0
+		// when letterCounter gets to 0, all chances are used up and user loses
+		//display the losing message and set the begin flag to start the next game
+		if (letterCounter < 1) {
+			//losing
+			imgAttr = document.getElementById("displayImg");
+			imgAttr.setAttribute("src", imgPath);
+			soundAttr = document.getElementById("winLoseMsg");
+			soundAttr.insertAdjacentHTML("afterend",
+				"<audio autoplay hidden><source src='assets/sounds/336998__corsica-s__awww-01.wav' type='audio/wav'> SO SAD!</audio>");
+			lossCounter++;
+			displayWord = formatTheWordForDisplay(chosenWord);
+			document.getElementById("winLoseMsg").style.fontSize = "28px";
+			document.getElementById("winLoseMsg").style.color = "red";
+			document.getElementById("winLoseMsg").style.fontWeight = "bold";
+			document.getElementById("winLoseMsg").innerHTML = "YOU LOSE!!";
 			document.getElementById("displayWord").innerHTML = displayWord;
-			document.getElementById("letterCounter").innerHTML = letterCounter;
-			document.getElementById("lettersUsed").innerHTML = lettersUsed.join(" ").toUpperCase();
-
-			//----------------------//
-			// win or lose check
-			//----------------------//
-			// once all the letters have been guessed correctly, there are no more '_' 
-			// in the guessWord and user wins
-			// update the mountain image, send out win message, update win counter
-			if (!guessWord.includes("_")) {
-				//winning
-				imgAttr = document.getElementById("displayImg");
-				imgAttr.setAttribute("src", imgPath);
-				soundAttr = document.getElementById("winLoseMsg");
-				soundAttr.insertAdjacentHTML("afterend",
-					"<audio autoplay hidden><source src='assets/sounds/24_Congrats.mp3' type='audio/mpeg'> CONGRATULATIONS!</audio>");
-				winCounter++;
-				document.getElementById("winLoseMsg").style.fontSize = "28px";
-				document.getElementById("winLoseMsg").style.color = "red";
-				document.getElementById("winLoseMsg").style.fontWeight = "bold";
-				document.getElementById("winLoseMsg").innerHTML = "YOU WIN!!";
-				document.getElementById("winCounter").innerHTML = winCounter;
-				document.getElementById("begin").setAttribute("class", "begin");
-				// break out of the for loop, user won and game is over
-				i = 12;
-				begin = true;
-
-				// note: letterCounter counts down backwards from 12 to 0
-				// when letterCounter gets to 0, all chances are used up and user loses
-			} else if (letterCounter < 1) {
-				//losing
-				imgAttr = document.getElementById("displayImg");
-				imgAttr.setAttribute("src", imgPath);
-				soundAttr = document.getElementById("winLoseMsg");
-				soundAttr.insertAdjacentHTML("afterend",
-					"<audio autoplay hidden><source src='assets/sounds/336998__corsica-s__awww-01.wav' type='audio/wav'> SO SAD!</audio>");
-				lossCounter++;
-				displayWord = formatTheWordForDisplay(chosenWord);
-				document.getElementById("winLoseMsg").style.fontSize = "28px";
-				document.getElementById("winLoseMsg").style.color = "red";
-				document.getElementById("winLoseMsg").style.fontWeight = "bold";
-				document.getElementById("winLoseMsg").innerHTML = "YOU LOSE!!";
-				document.getElementById("displayWord").innerHTML = displayWord;
-				document.getElementById("lossCounter").innerHTML = lossCounter;
-				document.getElementById("begin").setAttribute("class", "begin");
-				begin = true;
-				//at the end of the for loop, user lost and game is over
-				i = 12;
-			} //if win or lose end
-		} //for loop end
+			document.getElementById("lossCounter").innerHTML = lossCounter;
+			document.getElementById("begin").setAttribute("class", "begin");
+			begin = true;
+		} //if lose end
 	} //if begin end
 } // on.keyup end
